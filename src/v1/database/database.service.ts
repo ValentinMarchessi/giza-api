@@ -32,11 +32,8 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       synchronize: true,
     };
 
-    // If no dialect is specified and is in a non-prod env, load memory db and notify
     if (
       !options.dialect &&
-      // only load on staging and production!!!
-      // TODO: Move to constants.ts file
       [Environment.Development, Environment.Staging].includes(
         this.config.get('NODE_ENV')!,
       )
