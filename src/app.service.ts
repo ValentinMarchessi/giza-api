@@ -1,12 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpStatus, Injectable } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  constructor(private sequelize: Sequelize) {}
+
+  hi() {
+    return ':3';
   }
 
   async up() {
-    console.log('DATABASE UP');
+    return this.sequelize
+      .validate()
+      .then((res) => ({
+        message: 'ok',
+        code: HttpStatus.OK,
+        res,
+      }))
+      .catch((err) => ({
+        message: 'error',
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        error: err,
+      }));
   }
 }
