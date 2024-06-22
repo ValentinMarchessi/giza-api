@@ -1,1 +1,3 @@
-export class Candidate {}
+export class Candidate {
+  
+}

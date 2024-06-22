@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { User } from './entities/user.model';
+const bcrypt = require('bcrypt') as typeof import('bcrypt');
+
+const HASH_SALT_ROUNDS = 5;
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(User)
+    private userModel: typeof User,
+  ) {}
+
+  async create(createUserDto: CreateUserDto) {
+    const { password, ...rest } = createUserDto;
+    return this.userModel.create({
+      ...rest,
+      password: await bcrypt.hash(password, HASH_SALT_ROUNDS),
+    });
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.userModel.findAll();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.userModel.findByPk(id);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  findByEmail(email: string) {
+    return this.userModel.findOne({ where: { email } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.userModel.findByPk(id).then((user) => {
+      if (!user) {
+        throw new HttpException(
+          `User id ${id} not found`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return user.update(updateUserDto);
+    });
+  }
+
+  async remove(id: number) {
+    return this.userModel.findByPk(id).then((user) => {});
   }
 }

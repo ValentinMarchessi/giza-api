@@ -1,15 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
+import { TestBed } from '@automock/jest';
 
 describe('UserService', () => {
   let service: UserService;
+  // let database: jest.Mocked<Database>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UserService],
-    }).compile();
+  beforeAll(() => {
+    // const { unit, unitRef } = TestBed.create(service).compile();
 
-    service = module.get<UserService>(UserService);
+    // service = unit;
+    // database = unitRef.get(Database);
   });
 
   it('should be defined', () => {
