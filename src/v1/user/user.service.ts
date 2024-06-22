@@ -22,10 +22,6 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return this.userModel.findAll();
-  }
-
   findOne(id: number) {
     return this.userModel.findByPk(id);
   }

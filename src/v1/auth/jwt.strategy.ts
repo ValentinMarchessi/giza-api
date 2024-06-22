@@ -5,6 +5,10 @@ import { jwtConstants } from './constants';
 import { UserService } from '../user/user.service';
 const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
+type AuthUserJWT = {
+  id: string;
+  email: string;
+};
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private user: UserService) {
@@ -15,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
+  async validate(payload: AuthUserJWT) {
     const { email, id } = payload;
 
     console.log(`Validating JWT`, payload);
