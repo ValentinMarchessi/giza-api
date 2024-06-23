@@ -1,8 +1,8 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ExtractJwt, SecretOrKeyProvider, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { jwtConstants } from './constants';
 import { UserService } from '../user/user.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
 export type AuthUserJWT = {
@@ -11,11 +11,21 @@ export type AuthUserJWT = {
 };
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private user: UserService) {
+  constructor(
+    private user: UserService,
+    private config: ConfigService,
+  ) {
+    const provider: SecretOrKeyProvider = (req, rawJwtToken, done) => {
+      const jwtSecret = this.config.get<string>('jwt.secret');
+      // console.log('rawJwtToken', rawJwtToken);
+      // We can decode token here
+      done(null, jwtSecret);
+    };
+
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      secretOrKeyProvider: provider,
     });
   }
 
