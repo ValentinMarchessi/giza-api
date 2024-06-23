@@ -46,7 +46,7 @@ export class AuthService {
       id: user.id,
     });
 
-    return { access_token };
+    return { access_token, id: user.id as string };
   }
 
   signJWT(body: { email: string; id: string }) {
