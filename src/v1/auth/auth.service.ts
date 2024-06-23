@@ -39,12 +39,12 @@ export class AuthService {
     return {
       access_token: this.jwt.sign({
         email: user.email,
-        sub: user.id,
+        id: user.id,
       }),
     };
   }
 
-  signJWT(body: { email: string; sub: string }) {
+  signJWT(body: { email: string; id: string }) {
     return {
       access_token: this.jwt.sign(body),
     };

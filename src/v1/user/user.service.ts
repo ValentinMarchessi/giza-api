@@ -22,7 +22,7 @@ export class UserService {
     });
   }
 
-  findOne(id: number) {
+  byId(id: string) {
     return this.userModel.findByPk(id);
   }
 
@@ -30,8 +30,8 @@ export class UserService {
     return this.userModel.findOne({ where: { email } });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    await this.userModel.findByPk(id).then((user) => {
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return this.userModel.findByPk(id).then((user) => {
       if (!user) {
         throw new HttpException(
           `User id ${id} not found`,
@@ -42,7 +42,7 @@ export class UserService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return this.userModel.findByPk(id).then((user) => {});
   }
 }

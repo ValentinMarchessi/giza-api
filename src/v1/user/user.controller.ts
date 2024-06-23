@@ -10,36 +10,43 @@ import {
   ParseUUIDPipe,
   HttpStatus,
   Req,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  HttpException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { AuthUser } from '../auth/auth.decorator';
+import { AuthUserJWT } from '../auth/jwt.strategy';
+import { UserEntity } from './entities/user.entity';
 
-const { CREATED } = HttpStatus;
+const { CREATED, BAD_REQUEST } = HttpStatus;
 
 const UUIDV4 = new ParseUUIDPipe({ version: '4' });
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  findOne(@AuthUser() user: any) {
-    console.log(user);
-    return this.userService.findOne(+user.id);
+  async findOne(@AuthUser() { id }: AuthUserJWT) {
+    const user = await this.userService.byId(id);
+    if (!user) throw new HttpException('User not found', BAD_REQUEST);
+    return new UserEntity(user);
   }
 
-  @Patch(':id')
-  update(
-    @Param('id', UUIDV4) id: string,
+  @Patch()
+  async update(
+    @AuthUser() { id }: AuthUserJWT,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.update(+id, updateUserDto);
+    return new UserEntity(await this.userService.update(id, updateUserDto));
   }
 
-  @Delete(':id')
-  remove(@Param('id', UUIDV4) id: string) {
-    return this.userService.remove(+id);
+  @Delete()
+  remove(@AuthUser() { id }: AuthUserJWT) {
+    return this.userService.remove(id);
   }
 }

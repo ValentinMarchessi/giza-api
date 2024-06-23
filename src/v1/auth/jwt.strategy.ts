@@ -5,7 +5,7 @@ import { jwtConstants } from './constants';
 import { UserService } from '../user/user.service';
 const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
-type AuthUserJWT = {
+export type AuthUserJWT = {
   id: string;
   email: string;
 };
@@ -34,6 +34,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       `User ${user.firstName} ${user.lastName} with ID:${user.id} authorized`,
     );
 
-    return { sub: id, username: email };
+    return { id, email };
   }
 }
