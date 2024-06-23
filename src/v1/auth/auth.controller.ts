@@ -1,18 +1,9 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Request as Req } from 'express';
-import { LocalAuthGuard } from './local-auth.guard';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from 'src/utils/decorators';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
+import { LoginDTO } from './dto/login-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,12 +12,10 @@ export class AuthController {
     private user: UserService,
   ) {}
 
+  @Public()
   @Post('login')
-  async login(@Request() req: Req) {
-    if (!req.user) {
-      throw new BadRequestException('No user provided for auth');
-    }
-    return this.auth.login(req.user);
+  async login(@Body() body: LoginDTO) {
+    return this.auth.login(body);
   }
 
   @Public()
