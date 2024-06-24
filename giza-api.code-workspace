@@ -7,5 +7,6 @@
   "settings": {
     "prettier.endOfLine": "lf",
     "files.eol": "\n",
+    "eslint.lintTask.enable": true,
   },
 }
