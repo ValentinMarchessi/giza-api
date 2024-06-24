@@ -17,6 +17,7 @@ import {
   Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
+import { Role } from 'src/v1/auth/roles.enum';
 
 @Table({
   paranoid: true,
@@ -44,6 +45,9 @@ export class User extends Model<
   @AllowNull(false)
   @Column(DataType.STRING)
   declare password: string;
+
+  @Column(DataType.ENUM(Role.Candidate, Role.Company))
+  declare role: Role;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: CreationOptional<boolean>;

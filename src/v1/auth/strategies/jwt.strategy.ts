@@ -1,13 +1,15 @@
 import { ExtractJwt, SecretOrKeyProvider, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
+import { UserService } from '../../user/user.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Role } from '../roles.enum';
 const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
 export type AuthUserJWT = {
   id: string;
   email: string;
+  role: Role;
 };
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -44,6 +46,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       `User ${user.firstName} ${user.lastName} with ID:${user.id} authorized`,
     );
 
-    return { id, email };
+    return payload;
   }
 }

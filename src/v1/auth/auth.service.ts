@@ -8,6 +8,8 @@ import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.model';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login-dto';
+import { UserEntity } from '../user/entities/user.entity';
+import { AuthUserJWT } from './strategies/jwt.strategy';
 const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
 const { BAD_REQUEST } = HttpStatus;
@@ -30,10 +32,9 @@ export class AuthService {
 
     if (!validated) {
       throw new UnauthorizedException();
-    } else {
-      const { password, ...result } = user;
-      return result.dataValues;
     }
+
+    return new UserEntity(user);
   }
 
   async login({ email, password }: LoginDTO) {
@@ -41,15 +42,16 @@ export class AuthService {
     if (!user || !bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException();
     }
-    const access_token = this.jwt.sign({
+    const { access_token } = this.signJWT({
       email: user.email,
       id: user.id,
+      role: user.role,
     });
 
     return { access_token, id: user.id as string };
   }
 
-  signJWT(body: { email: string; id: string }) {
+  signJWT(body: AuthUserJWT) {
     return {
       access_token: this.jwt.sign(body),
     };

@@ -26,7 +26,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
       host: this.config.get('DB_HOST'),
       port: +this.config.get('DB_PORT'),
       username: this.config.get('DB_USER'),
-      password: this.config.get('DB_PASSWORD'),
+      password: this.config.get('POSTGRES_PASSWORD'),
       typeValidation: true,
       autoLoadModels: true,
       synchronize: true,

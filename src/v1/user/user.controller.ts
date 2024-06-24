@@ -1,15 +1,11 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
-  Param,
   Delete,
-  Res,
   ParseUUIDPipe,
   HttpStatus,
-  Req,
   UseInterceptors,
   ClassSerializerInterceptor,
   HttpException,
@@ -17,21 +13,20 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Response } from 'express';
-import { AuthUser } from '../auth/auth.decorator';
-import { AuthUserJWT } from '../auth/jwt.strategy';
+import { AuthUser } from '../auth/decorators/auth.decorator';
+import { AuthUserJWT } from '../auth/strategies/jwt.strategy';
 import { UserEntity } from './entities/user.entity';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/roles.enum';
 
-const { CREATED, BAD_REQUEST } = HttpStatus;
-
-const UUIDV4 = new ParseUUIDPipe({ version: '4' });
+const { BAD_REQUEST } = HttpStatus;
 @UsePipes(new ValidationPipe({ transform: true }))
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(Role.Candidate)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findOne(@AuthUser() { id }: AuthUserJWT) {
