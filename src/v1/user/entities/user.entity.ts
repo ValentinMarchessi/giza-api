@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { User } from './user.model';
-import { PartialType } from '@nestjs/mapped-types';
+import { Role } from 'src/v1/auth/roles.enum';
 
 @Exclude()
 export class UserEntity {
@@ -8,6 +8,7 @@ export class UserEntity {
   @Expose() firstName: string;
   @Expose() lastName: string;
   @Expose() email: string;
+  @Expose() role: Role;
   password: string;
 
   constructor(partial: Partial<User>) {

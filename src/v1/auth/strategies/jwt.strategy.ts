@@ -2,9 +2,8 @@ import { ExtractJwt, SecretOrKeyProvider, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../../user/user.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { Role } from '../roles.enum';
-const bcrypt = require('bcrypt') as typeof import('bcrypt');
 
 export type AuthUserJWT = {
   id: string;
@@ -31,10 +30,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: AuthUserJWT) {
-    const { email, id } = payload;
-
-    console.log(`Validating JWT`, payload);
+  async validate(jwt: AuthUserJWT) {
+    const { email, id, role } = jwt;
 
     const user = await this.user.findByEmail(email);
 
@@ -43,9 +40,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     console.log(
-      `User ${user.firstName} ${user.lastName} with ID:${user.id} authorized`,
+      `User ${role} ${user.firstName} ${user.lastName} [${id}] authorized `,
     );
 
-    return payload;
+    return jwt;
   }
 }

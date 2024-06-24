@@ -4,7 +4,6 @@ import {
   Body,
   Patch,
   Delete,
-  ParseUUIDPipe,
   HttpStatus,
   UseInterceptors,
   ClassSerializerInterceptor,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { AuthUser } from '../auth/decorators/auth.decorator';
+import { User } from '../auth/decorators/auth.decorator';
 import { AuthUserJWT } from '../auth/strategies/jwt.strategy';
 import { UserEntity } from './entities/user.entity';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -29,7 +28,7 @@ export class UserController {
   @Roles(Role.Candidate)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
-  async findOne(@AuthUser() { id }: AuthUserJWT) {
+  async findOne(@User() { id }: AuthUserJWT) {
     const user = await this.userService.byId(id);
     if (!user) throw new HttpException('User not found', BAD_REQUEST);
     return new UserEntity(user);
@@ -38,14 +37,14 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Patch()
   async update(
-    @AuthUser() { id }: AuthUserJWT,
+    @User() { id }: AuthUserJWT,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return new UserEntity(await this.userService.update(id, updateUserDto));
   }
 
   @Delete()
-  remove(@AuthUser() { id }: AuthUserJWT) {
+  remove(@User() { id }: AuthUserJWT) {
     return this.userService.remove(id);
   }
 }

@@ -20,7 +20,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
   constructor(private config: ConfigService) {}
 
   async createSequelizeOptions(): Promise<SequelizeModuleOptions> {
-    let options: SequelizeModuleOptions = {
+    const options: SequelizeModuleOptions = {
       dialect: this.config.get('DB_DIALECT'),
       database: this.config.get('DB_NAME'),
       host: this.config.get('DB_HOST'),

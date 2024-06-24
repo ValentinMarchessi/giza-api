@@ -5,12 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.model';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login-dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { AuthUserJWT } from './strategies/jwt.strategy';
-const bcrypt = require('bcrypt') as typeof import('bcrypt');
+import * as crypt from './utils/encrypt';
 
 const { BAD_REQUEST } = HttpStatus;
 
@@ -28,9 +27,7 @@ export class AuthService {
       throw new HttpException('Invalid Email', BAD_REQUEST);
     }
 
-    const validated = await bcrypt.compare(pass, user.password);
-
-    if (!validated) {
+    if (!crypt.compare(pass, user.password)) {
       throw new UnauthorizedException();
     }
 
@@ -39,7 +36,7 @@ export class AuthService {
 
   async login({ email, password }: LoginDTO) {
     const user = await this.users.findByEmail(email);
-    if (!user || !bcrypt.compareSync(password, user.password)) {
+    if (!user || !crypt.compare(password, user.password)) {
       throw new UnauthorizedException();
     }
     const { access_token } = this.signJWT({

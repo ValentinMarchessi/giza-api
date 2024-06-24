@@ -1,11 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './entities/user.model';
-const bcrypt = require('bcrypt') as typeof import('bcrypt');
-
-const HASH_SALT_ROUNDS = 5;
 
 @Injectable()
 export class UserService {
@@ -15,11 +17,7 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { password, ...rest } = createUserDto;
-    return this.userModel.create({
-      ...rest,
-      password: await bcrypt.hash(password, HASH_SALT_ROUNDS),
-    });
+    return this.userModel.create(createUserDto);
   }
 
   byId(id: string) {
@@ -43,6 +41,10 @@ export class UserService {
   }
 
   async remove(id: string) {
-    return this.userModel.findByPk(id).then((user) => {});
+    return this.userModel.findByPk(id).then(async (user) => {
+      if (!user) throw new BadRequestException();
+
+      await user.destroy();
+    });
   }
 }
