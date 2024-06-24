@@ -30,10 +30,6 @@ export class AuthController {
   async signup(@Body() body: CreateUserDto) {
     const user = await this.user.create(body);
 
-    return this.auth.signJWT({
-      email: user.email,
-      id: user.id,
-      role: user.role,
-    });
+    return this.auth.signJWT(user);
   }
 }

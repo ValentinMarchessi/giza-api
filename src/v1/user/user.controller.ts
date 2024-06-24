@@ -25,7 +25,7 @@ const { BAD_REQUEST } = HttpStatus;
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(Role.Candidate)
+  @Roles(Role.Candidate, Role.Company)
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async findOne(@User() { id }: AuthUserJWT) {
