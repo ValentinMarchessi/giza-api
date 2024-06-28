@@ -5,11 +5,6 @@ import {
   SequelizeModuleOptions,
 } from '@nestjs/sequelize';
 import { Environment } from 'src/env.validation';
-import { User } from '../user/entities/user.model';
-const fs = require('fs/promises') as typeof import('fs/promises');
-import { join } from 'path';
-import { LazyModuleLoader } from '@nestjs/core';
-import ModelManager from 'sequelize/types/model-manager';
 
 export enum DATABASE_PROVIDER {
   SEQUELIZE = 'SEQUELIZE',
