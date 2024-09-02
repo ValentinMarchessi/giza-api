@@ -8,9 +8,9 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login-dto';
 import { UserEntity } from '../user/entities/user.entity';
-import { AuthUserJWT } from './strategies/jwt.strategy';
 import * as crypt from './utils/encrypt';
 import { User } from '../user/entities/user.model';
+import { AuthUserJWT } from './types/jwt';
 
 const { BAD_REQUEST } = HttpStatus;
 
@@ -36,13 +36,20 @@ export class AuthService {
   }
 
   async login({ email, password }: LoginDTO) {
-    const user = await this.users.findByEmail(email);
-    if (!user || !crypt.compare(password, user.password)) {
+    try {
+      const user = await this.users.findByEmail(email);
+      const isAuthored = await crypt.compare(password, user.password);
+      if (!isAuthored) {
+        throw new UnauthorizedException();
+      }
+      const { access_token } = this.signJWT(user);
+
+      return { access_token, id: user.id as string };
+    } catch (error) {
+      // Catch any errors and throw an UnauthorizedException to avoid sending sensitive information
+      // to the client.
       throw new UnauthorizedException();
     }
-    const { access_token } = this.signJWT(user);
-
-    return { access_token, id: user.id as string };
   }
 
   signJWT(user: User) {
