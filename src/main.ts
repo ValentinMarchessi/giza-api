@@ -5,21 +5,35 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigModule } from '@nestjs/config';
 
+const app_config = {
+  port: process.env.PORT ?? 3000,
+  env: process.env.NODE_ENV ?? 'development',
+  prefix: 'v1',
+  swagger: {
+    path: 'api',
+    title: 'Giza',
+    version: '1.0',
+    tag: 'giza',
+  },
+};
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.setGlobalPrefix('v1');
+  app.setGlobalPrefix(app_config.prefix);
   app.useGlobalPipes(new ValidationPipe());
-  const config = new DocumentBuilder()
-    .setTitle('Giza')
-    .setVersion('1.0')
-    .addTag('giza')
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle(app_config.swagger.title)
+    .setVersion(app_config.swagger.version)
+    .addTag(app_config.swagger.tag)
     .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(
+    app_config.swagger.path,
+    app,
+    SwaggerModule.createDocument(app, swaggerConfig),
+  );
 
   await ConfigModule.envVariablesLoaded;
-  const port = process.env.PORT ?? 3000;
-  await app.listen(port);
-  console.log(`App listening on port: ${port}`);
+  await app.listen(app_config.port);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
