@@ -18,6 +18,7 @@ const app_config = {
 };
 
 async function bootstrap() {
+  await ConfigModule.envVariablesLoaded;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.setGlobalPrefix(app_config.prefix);
   app.useGlobalPipes(new ValidationPipe());
@@ -32,7 +33,6 @@ async function bootstrap() {
     SwaggerModule.createDocument(app, swaggerConfig),
   );
 
-  await ConfigModule.envVariablesLoaded;
   await app.listen(app_config.port);
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

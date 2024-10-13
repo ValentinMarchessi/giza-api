@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login-dto';
@@ -11,8 +6,6 @@ import { UserEntity } from '../user/entities/user.entity';
 import * as crypt from './utils/encrypt';
 import { User } from '../user/entities/user.model';
 import { AuthUserJWT } from './types/jwt';
-
-const { BAD_REQUEST } = HttpStatus;
 
 @Injectable()
 export class AuthService {
@@ -25,11 +18,11 @@ export class AuthService {
     const user = await this.users.findByEmail(email);
 
     if (!user) {
-      throw new HttpException('Invalid Email', BAD_REQUEST);
+      throw UserService.EXCEPTIONS.NOT_FOUND;
     }
 
     if (!crypt.compare(pass, user.password)) {
-      throw new UnauthorizedException();
+      throw UserService.EXCEPTIONS.UNAUTHORIZED;
     }
 
     return new UserEntity(user);
@@ -40,15 +33,16 @@ export class AuthService {
       const user = await this.users.findByEmail(email);
       const isAuthored = await crypt.compare(password, user.password);
       if (!isAuthored) {
-        throw new UnauthorizedException();
+        throw UserService.EXCEPTIONS.UNAUTHORIZED;
       }
       const { access_token } = this.signJWT(user);
 
       return { access_token, id: user.id as string };
     } catch (error) {
+      console.error(error);
       // Catch any errors and throw an UnauthorizedException to avoid sending sensitive information
       // to the client.
-      throw new UnauthorizedException();
+      throw UserService.EXCEPTIONS.UNAUTHORIZED;
     }
   }
 

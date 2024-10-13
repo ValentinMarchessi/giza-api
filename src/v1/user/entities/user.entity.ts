@@ -5,8 +5,6 @@ import { Role } from 'src/v1/auth/roles.enum';
 @Exclude()
 export class UserEntity {
   id: string;
-  @Expose() firstName: string;
-  @Expose() lastName: string;
   @Expose() email: string;
   @Expose() role: Role;
   password: string;

@@ -20,27 +20,27 @@ import { Role } from 'src/v1/auth/roles.enum';
 @Table({
   paranoid: true,
 })
-export class User extends Model<
-  InferAttributes<User>,
-  InferCreationAttributes<User>
+export class Candidate extends Model<
+  InferAttributes<Candidate>,
+  InferCreationAttributes<Candidate>
 > {
   @Column({ type: DataType.UUID, defaultValue: UUIDV4, primaryKey: true })
   id: CreationOptional<string>;
 
-  @AllowNull(false)
-  @Unique
-  @Column(DataType.STRING(40))
-  declare email: string;
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  declare password: string;
-
-  @Column(DataType.ENUM(Role.Candidate, Role.Company))
-  declare role: Role;
-
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: CreationOptional<boolean>;
+
+  @Column({ type: DataType.STRING })
+  declare firstName: string;
+
+  @Column({ type: DataType.STRING })
+  declare lastName: string;
+
+  @Column({ type: DataType.STRING })
+  declare bio: string;
+
+  @Column({ type: DataType.STRING })
+  declare phoneNumber: string;
 
   @CreatedAt
   declare createdAt: CreationOptional<Date>;

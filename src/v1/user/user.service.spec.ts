@@ -1,6 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { TestBed } from '@automock/jest';
 
 describe('UserService', () => {
   let service: UserService;
