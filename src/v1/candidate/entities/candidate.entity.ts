@@ -1,6 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { User } from './user.model';
-import { Role } from 'src/v1/auth/roles.enum';
+import { User } from 'src/v1/user/entities/user.model';
 
 @Exclude()
 export class UserEntity {

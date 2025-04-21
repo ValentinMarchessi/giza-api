@@ -2,6 +2,7 @@ import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
+  NonAttribute,
   UUIDV4,
 } from 'sequelize';
 import {
@@ -10,12 +11,14 @@ import {
   CreatedAt,
   DataType,
   DeletedAt,
+  HasOne,
   Model,
   Table,
   Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
 import { Role } from 'src/v1/auth/roles.enum';
+import { Candidate } from 'src/v1/candidate/entities/candidate.model';
 
 @Table({
   paranoid: true,
@@ -41,6 +44,9 @@ export class User extends Model<
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: CreationOptional<boolean>;
+
+  @HasOne(() => Candidate)
+  candidate: NonAttribute<Candidate>;
 
   @CreatedAt
   declare createdAt: CreationOptional<Date>;

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCandidateDto } from './dto/create-candidate.dto';
 import { UpdateCandidateDto } from './dto/update-candidate.dto';
-import { Candidate } from './entities/candidate.entity';
 import { InjectModel } from '@nestjs/sequelize';
+import { Candidate } from './entities/candidate.model';
 
 @Injectable()
 export class CandidateService {
@@ -12,8 +12,8 @@ export class CandidateService {
   ) {}
 
   create(createCandidateDto: CreateCandidateDto) {
+    console.log('Creating Candidate: ', createCandidateDto);
     return 'This action adds a new candidate';
-    this.candidateModel
   }
 
   findAll() {
@@ -25,6 +25,7 @@ export class CandidateService {
   }
 
   update(id: number, updateCandidateDto: UpdateCandidateDto) {
+    console.log('Updating Candidate: ', updateCandidateDto);
     return `This action updates a #${id} candidate`;
   }
 

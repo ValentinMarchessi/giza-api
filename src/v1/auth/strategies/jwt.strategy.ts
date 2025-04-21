@@ -33,9 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       throw new UnauthorizedException();
     }
 
-    console.log(
-      `User ${role} ${user.firstName} ${user.lastName} [${id}] authorized `,
-    );
+    console.log(`User ${email} [role: ${role}] [${id}] authorized `);
 
     return jwt;
   }

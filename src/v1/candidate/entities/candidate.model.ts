@@ -5,17 +5,17 @@ import {
   UUIDV4,
 } from 'sequelize';
 import {
-  AllowNull,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
   DeletedAt,
+  ForeignKey,
   Model,
   Table,
-  Unique,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { Role } from 'src/v1/auth/roles.enum';
+import { User } from 'src/v1/user/entities/user.model';
 
 @Table({
   paranoid: true,
@@ -24,8 +24,13 @@ export class Candidate extends Model<
   InferAttributes<Candidate>,
   InferCreationAttributes<Candidate>
 > {
+  /** Foreign Key to User ID */
+  @ForeignKey(() => User)
   @Column({ type: DataType.UUID, defaultValue: UUIDV4, primaryKey: true })
   id: CreationOptional<string>;
+
+  @BelongsTo(() => User)
+  declare user: User;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: true })
   declare isActive: CreationOptional<boolean>;
